@@ -103,10 +103,12 @@ If you followed the installation demo, you've already used the console to instal
 ::: {.alert .alert-primary}
 Copy these commands one a a time, and paste them into the Console, then hit Return/Enter to execute the command.
 
-       install.packages("janitor")
-       install.packages("rmarkdown")
-       install.packages("skimr")
-       install.packages("swirl")
+```         
+   install.packages("janitor")
+   install.packages("rmarkdown")
+   install.packages("skimr")
+   install.packages("swirl")
+```
 :::
 
 These package names should all be in quotes. We'll be installing other packages later in this guide, but for now that is everything you need.
