@@ -13,6 +13,7 @@ options(scipen=999)
 
 # Load the tidyverse here
 
+
 # Load janitor here
 
 
@@ -37,28 +38,36 @@ Background on this data from [Social Explorer](https://www.socialexplorer.com/da
 
 # your answer here
 
+MarylandData <- rio::import("lab_03.csv" , which = "RaceData")
+
+View(MarylandData)
+
+
 ```
 
 
 ## Answer questions
 
 Q1: Which five cities have the largest overall Hispanic population in 2020? Name the five cities that had the largest Hispanic population in 2020. 
+The five cities that had the largest Hispanic population in 2020 are Baltimore City, Wheaton CDP, Germantown CDP, Silver Spring CDP, and Aspen Hill CDP. 
 
 A1:
 ```{r}
 
 # Write your code in this codeblock.
-
-# your answer here
-
+hispanic <- MarylandData %>% 
+  select( place, x2020_hispanic) %>%
+  slice_max(x2020_hispanic, n=5)
 ```
 
 Q2: Find the cities with the largest Black population and arrange the results in descending order. 
-
-A2:
+A2: Baltimore City had the largest Black population, see page titled "Black" for more. 
 
 ```{r}
 #write your code here
+black <- MarylandData %>% 
+  select( place, x2020_black) %>%
+  arrange(desc(x2020_black))
 
 # your answer here
 
@@ -66,10 +75,13 @@ A2:
 
 Q3: Create a table called top_hispanic that shows the top 15 communities with the largest Hispanic population in 2020, and also display the 2010 Hispanic population and the total community population for 2020. Look at your results - what stands out to you? Craft a one-paragraph story pitch for your editor. 
 
-A3:
+A3: Overall, the Hispanic population has increased in the state of Maryland. One thing I would look into is the increase in Frederick City. Frederick City increased the Hispanic population from 7,130 to 11,937, which is over a 50% increase. I would look into if there was a reason that drew Hispanics to this area, or if there is a reason why there was an increase. 
 
 ```{r}
 
 # your answer here
-
+hispanic <- MarylandData %>% 
+  select( place, x2020_hispanic, x2010_hispanic, x2020_total) %>%
+  slice_max(x2020_hispanic, n=15)
+Me
 ```
