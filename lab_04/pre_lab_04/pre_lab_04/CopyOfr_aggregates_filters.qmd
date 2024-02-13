@@ -49,8 +49,8 @@ Inside of the **read_csv()** function, we've put the name of the file we want to
 Here is the entire command in a code chunk. Run it by clicking the green arrow to the right below. 
 
 ```{r eval=FALSE, message=FALSE}
-#Set working directory to /Users/rebeccaredeker/Documents/GitHub/data_journalism_class/04_labs/lab_04
-baltcity_income<- read_csv("baltcity_income_clean.csv") %>%
+
+baltcity_income<- read_csv("assets/data/baltcity_income_clean.csv") %>% 
   as.data.frame()
 
 ```
@@ -232,6 +232,7 @@ baltcity_income %>%
     x2010_median = median(x2010, na.rm=TRUE),
     x2010_avg = mean(x2010, na.rm=TRUE)) 
 ```
+
 Use the right diamond at `x2016_median` to see columns 5-7.
 
 ![](assets/r_aggregates_navigating.gif){width="100%"}
@@ -244,7 +245,7 @@ Let's pull in another dataset and summarize by group.
 
 ```{r, message=FALSE}
 #loading 2020 and 2010 Baltimore City population by race
-baltcity_race <- read_csv("baltcity_race_8_13.csv") %>% 
+baltcity_race <- read_csv("assets/data/baltcity_race_8_13.csv") %>% 
   as.data.frame()
 ```
 
@@ -269,30 +270,12 @@ baltcity_race %>%
 **Pre-Lab Question: **
 We know the median income for Baltimore City (I just told you a few paragraphs ago).
 Construct a filter for all census tracts below the citywide median household income for 2020.
-> below_median <- baltcity_income %>%
-+     filter(x2020 < 49875)
-
 Count them. 
-> baltcity_income %>% 
-+     select(neighborhood, x2020) %>% 
-+     filter(x2020 < 49875) %>% 
-+     summarise(
-+         count_tracts = n())
-
 What percentage of the city's census tracts are below the median? Put that in code too.
-> baltcity_below_median_income <-- (97/200) * 100
-
-48.5%
 Draft a tweet with your findings.
-
-Baltimore's income landscape: In 2020, there are 97 census tracts below the citywide median household income of $49,875. That's 48.5% of all the census tracts. 
-#BaltimoreIncome #Census
-
 
 Answer this question in English: Write in Elms
 
 
-
-  
 
 ```
