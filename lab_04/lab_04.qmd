@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=999)
 
 # Load the tidyverse here
-
+library (tidyverse)
 # Load janitor here
-
+library (janitor)
 
 
 ```
@@ -34,6 +34,8 @@ In this data set, each row represents a city or town in Maryland with the 2010 a
 Background on this data from [Social Explorer](https://www.socialexplorer.com/data/ACS2016_5yr/metadata/?ds=ACS16_5yr&table=B02001) 
 ```{r}
 # Write code to load the Maryland race by city, place for 2010 - 2020 and call it md_race.
+md_race<- read_csv("lab_03.csv") %>% as.data.frame() 
+
 # The data is called lab_03.csv, and is in the same folder as lab_03.qmd (this data notebook)
 
 ```
@@ -42,10 +44,15 @@ Background on this data from [Social Explorer](https://www.socialexplorer.com/da
 
 Q1: Name the five cities that had the largest Hispanic population as a percentage of the entire population in 2020 and call it top5_hispanic. Produce a top 5 table for each, selecting the place, 2020 Hispanic, 2020 total and your new calculation.
 
-A1:
+A1: The top five cities that had the largest Hispanic population as a percentage of the entire population in 2020 are Langley Park, Templeville Town, Marydel Town, Henderson Town and Edmonston Town. 
 ```{r}
 
 # Write your code in this codeblock.
+top5_hispanic <- md_race %>%
+  select(place,x2020_hispanic,x2020_total)%>%
+  mutate(ratio_h=x2020_hispanic/x2020_total) %>%
+  arrange(desc(ratio_h)) %>% 
+  slice_head(n = 5)
 
 
 
@@ -53,10 +60,17 @@ A1:
 
 Q2: Compare the top 10 cities with the largest Black population as a percentage of the overall population in 2010 and 2020. Filter for places with more than 20,000 population in 2010. Call your results pct_black. Compare results for 2020 vs 2010. What is different? What surprised you? 
 
-A2:
+
+A2: All of the cities included had a change in their Black population. However, most of them stayed within five percent of the 2010 population. What surprised me was that Fort Washington CDP decreased by nearly 10% in their Black population. 
 
 ```{r}
 #write your code here
+percent_black <- md_race %>%
+  select(place, x2010_total, x2010_black, x2020_black, x2020_total) %>% 
+   filter(x2010_total > 20000) %>%
+  mutate(percent_x2020_black = (x2020_black/x2020_total)*100, 
+         percent_x2010_black = (x2010_black/x2010_total)*100) %>% 
+  slice_max(percent_x2020_black, n=10)
 
 
 
@@ -64,10 +78,15 @@ A2:
 
 Q3: Find the 15 communities that had the great gains in Hispanic population from 2010 to 2020 as measured by percentage change. Also calculate percentage change for the community's overall growth during the same period. Filter your results for communities with more than 10,000 people as of 2020. Your results will be hisp_growth. Look at your results, craft a one-paragraph story pitch for your editor. 
 
-A3:
+A3: In North Laurel, the population as a whole grew immensely, by 509.8%. However, more specifically, the Hispanic population grew by 1,186.74%. This is just one area in Maryland that had a large increase in the Hispanic population. Maryland as a whole had a large increase in the Hispanic population in comparison to the total. 
 
 ```{r}
-
+ hisp_growth<- md_race %>%
+  select(place, x2010_total, x2010_hispanic, x2020_hispanic, x2020_total) %>% 
+   filter(x2020_total > 10000) %>%
+  mutate(hispanic_growth = 100*((x2020_hispanic-x2010_hispanic)/x2010_hispanic),
+         total_growth = 100*((x2020_total-x2010_total)/x2010_total)) %>% 
+  slice_max(hispanic_growth, n=15)
 
 
 ```
