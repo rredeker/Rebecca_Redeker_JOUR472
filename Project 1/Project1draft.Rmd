@@ -1,0 +1,19 @@
+---
+title: "Project 1"
+output: html_document
+date: "2024-02-15"
+---
+```{r}
+library(tidyverse)
+library(rio)
+library(janitor)
+
+```
+
+
+```{r}
+#Set working directory to ~/Documents/GitHub/Rebecca_Redeker_JOUR472/Project 1 
+
+Meal_fund <- rio::import("Percentage_of_Students_Receiving_Free_or_Reduced_Meals.xlsx")
+
+```
