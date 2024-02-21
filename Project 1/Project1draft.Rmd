@@ -14,6 +14,6 @@ library(janitor)
 ```{r}
 #Set working directory to ~/Documents/GitHub/Rebecca_Redeker_JOUR472/Project 1 
 
-Meal_fund <- rio::import("Percentage_of_Students_Receiving_Free_or_Reduced_Meals.xlsx")
+Meal_fund <- rio::import("meal_fund.xlsx")
 
 ```
