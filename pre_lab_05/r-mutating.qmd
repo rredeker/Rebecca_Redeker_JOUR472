@@ -159,28 +159,50 @@ Mutate is an essential tool to make your data more useful and allows you to ask 
 Based on the skills you have learned above, use this [dataset of Maryland cities 'assets/data/city_md_income.csv']("assets/data/city_md_income.csv") (it is included in your prelab folder)
 
 And answer the following questions:
-
+```{r message=FALSE}
+city_md_income <- read_csv("city_md_income.csv") %>%
+  as.data.frame()
+```
 
 **Question #1: **
 
 1) Calculate the difference in median income from 2010 to 2020 for all places listed. Calculate the percentage change. 
 ```{r}
- 
+ city_md_income %>%
+  select(geoid, place, median_inc_2010, median_inc_2020) %>%
+    mutate(Diff_Income = (((median_inc_2020-median_inc_2010)/median_inc_2010)*100)) %>% 
+  arrange(desc(Diff_Income))
 ```
 
 Which city had the highest absolute change? Which had the highest percentage change?
+Beaver Creek CDP had the highest absolute change. Shaft CDP had the highest percentage change. 
 ```{r}
- 
+ result <- city_md_income%>%
+  mutate(absolute_change = median_inc_2020 - median_inc_2010,
+         percentage_change = abs (((median_inc_2020 - median_inc_2010) /(median_inc_2010))* 100)) %>%
+  arrange(desc(absolute_change))
 ```
- 
+```{r}
+result2 <- city_md_income %>%
+  mutate(absolute_change = median_inc_2020 - median_inc_2010,
+         percentage_change = abs (((median_inc_2020 - median_inc_2010) /(median_inc_2010))* 100)) %>%
+  arrange(desc(percentage_change))
+
+```
 Produce a table with the top 25 places ranked by the highest percentage change.
 ```{r}
- 
+ result3 <- city_md_income %>%
+  mutate( percentage_change = ((median_inc_2020 - median_inc_2010) /(median_inc_2010))* 100)%>%
+  arrange(desc(percentage_change)) %>% 
+  slice(1:25)
 ```
 
 Produce a second table with the top 25 places ranked by the lowest or negative percentage change.
 ```{r}
- 
+ result4 <- city_md_income %>%
+  mutate( percentage_change = ((median_inc_2020 - median_inc_2010) /(median_inc_2010))* 100)%>%
+  arrange(percentage_change) %>% 
+  slice(1:25)
 ```
 
 
@@ -188,6 +210,21 @@ Produce a second table with the top 25 places ranked by the lowest or negative p
 Answer this question in English: Write in Elms
 
 2) Building on the previous lesson on filtering, describe how you would determine the median value of the percentage change and produce a table with the 10 neighborhoods with the highest change and the 10 with the lowest change.
- 
+
+```{r}
+ summary(city_md_income$median_inc_2020)
+
+lowest <- city_md_income %>% 
+  mutate(
+    category= case_when(
+      median_inc_2020 > 63327 ~ "above",
+      median_inc_2020 < 63327 ~ "below",
+    )
+  )
+lowest %>% 
+  select(place, median_inc_2020, category)
+  
+
+```
 
  
