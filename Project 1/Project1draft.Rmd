@@ -2,14 +2,27 @@
 title: "Project 1"
 output: html_document
 date: "2024-02-15"
+Rebecca Redeker 02/26/2024
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 ---
 ```{r}
 library(tidyverse)
 library(rio)
 library(janitor)
+options(scipen=999)
 
 ```
 
+#Load Data
+In this data set, each row represents the percentage of students that are eligible for free meals from public schools, based on their median household income, in the Baltimore area. 
+
+In this data set, there are rows, referred to as "farmxx" that include the percentages of students who were eligible. The xx stands for the year that the school year finished, ranging from 2010 to 2013. There are also two rows that refer the length and area of the designated town. CSA 210 also stands for the name of the city. 
+
+
+Background on this data from [Vital Signs Open Data Reporter](https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percentage-of-students-receiving-free-or-reduced-meals/about) 
 
 ```{r}
 #Set working directory to ~/Documents/GitHub/Rebecca_Redeker_JOUR472/Project 1 
@@ -17,3 +30,13 @@ library(janitor)
 Meal_fund <- rio::import("meal_fund.xlsx")
 
 ```
+Q1: Name the five cities that had the largest percentage of eligible students for free meals for 2010 (farms10). 
+```{r}
+# Write your code in this codeblock.
+top5_eligible <- meal_fund %>%
+  select(CSA2010,farms10)%>%
+  arrange(desc(ratio_h)) %>% 
+  slice_head(n = 5)
+
+```
+
