@@ -363,6 +363,10 @@ The county with the highest average census response rate is Howard County, and t
 summary_table <- md_smith_data %>% 
   select(NAME, census_response_rate2020) %>% 
 arrange(desc(census_response_rate2020))
+
+summary_table %>% 
+  select(NAME,census_response_rate2020) %>% 
+  slice_min(census_response_rate2020, n=1)
 ```
 
 
@@ -384,7 +388,13 @@ You want to join these two dataframes to answer the question "which Maryland cou
 
 What do you think will happen when you attempt to "inner_join" these two tables?
 
+#ANSWER
+
 I believe that it wont work, because one category is named "Kent County". However, the other category is named "Kent County, MD". So, you cannot interjoin columns if they are not the same name, even if they measure to the same data. 
+
+
+
+
 
 ## Resources
 
