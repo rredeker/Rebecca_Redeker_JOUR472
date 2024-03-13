@@ -101,3 +101,19 @@ average_assitance <- meal_fund %>%
 #Answer:
 In 2010, on average, 78.94% of students in these areas were provided with aid. In 2011, it remained close in number just increasing to 79.41%. In 2012, the average percentage decreased by a large number, to 72.65%, and it rose by even more to 80.6% in 2013. 
 
+
+#Pitch
+The data that Vital Signs- Open Data presents, contains vital information about students who are currently enrolled in a public school system in an area of Baltimore Maryland, and how many of those students are receiving either partial or full aid in regards to their meals while they are at school. 
+In 2010, 2011 and 2013, the average number of students across all areas as a whole that were receiving meals was between 78% and 81%. However, in 2012, there was a decline by nearly 7%, which raises questions about why it decreased this quickly. In addition, there was an even more significant turnaround to 2013, and the number of students receiving this aid increased again, by nearly 8%. 
+What was special about the 2012 school year, was to make lunch funding decrease by a large percentage, and only for the 2012 school year? Another part of the story could be the focus on areas that were outliers throughout the years, meaning they had minimal funds going towards students who were in need of lunch aid, or there were less students that were in need. For example, in 2013, Roland Park/Poplar Hill had 13.28% of students receiving free or reduced meals in their public school system . In addition, both Mount Washington/Coldspring and North Baltimore/Guilford/Homeland had 28.57% and 28.18% of students receiving meal aid, which was far below the benchmark for the other communities involved in the dataset.
+To proceed with a story, I would like to look into the amount of money that is set aside for meal funding in these areas, and if it is less than other areas, or if the median household income is significantly higher, which would mean less students are in need of meal funding. 
+
+
+#Tweet #1- in reference to graphic on question 1
+Above is a graphic made in regards to data from Vital Signs-Open Data, that presents a visual of the percentage of Baltimore’s public school students receiving lunch aid. On the Y axis is the number of areas within Baltimore that attest to that percentage. As shown, many areas had between 70%-90% of students receiving aid. #JOUR472 #RVisual
+
+
+#Tweet #2- in reference to graphic on question 3
+This graphic made by #R-Studio provides insight on the average of all communities within Baltimore, and how many students are receiving aid towards their lunches, within the public school system. As shown, the 2012 school year had overall less students receiving aid on their school provided lunches than years in the past, and the year following. 
+
+
