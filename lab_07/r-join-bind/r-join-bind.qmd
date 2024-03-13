@@ -343,30 +343,18 @@ table1 %>%
   
 Name the new table "md_smith_data"
 ```{r}
-maryland_tracts2 <- rio::import("maryland_tracts.xls")
 
-maryland_counties_geoid2 <- rio :: import("md_counties_geoids.txt")
 
-md_smith_data <- maryland_counties_geoid2 %>% 
-  inner_join(maryland_tracts2, by=c("GEOID"="cty"))
 
 ```
 
 
 With your maryland_smith_data table, produce a summary table showing the county name and the average census response rate for 2020. arrange the table in descending order. 
 Identify the county with the highest average census response rate for 2020 and the county with the lowest.
-
-The county with the highest average census response rate is Howard County, and the lowest rate was Worcester County. 
-
-
 ```{r}
-summary_table <- md_smith_data %>% 
-  select(NAME, census_response_rate2020) %>% 
-arrange(desc(census_response_rate2020))
 
-summary_table %>% 
-  select(NAME,census_response_rate2020) %>% 
-  slice_min(census_response_rate2020, n=1)
+
+
 ```
 
 
@@ -387,14 +375,6 @@ Kent County | 15
 You want to join these two dataframes to answer the question "which Maryland county has the highest number of large employees per person?"
 
 What do you think will happen when you attempt to "inner_join" these two tables?
-
-#ANSWER
-
-I believe that it wont work, because one category is named "Kent County". However, the other category is named "Kent County, MD". So, you cannot interjoin columns if they are not the same name, even if they measure to the same data. 
-
-
-
-
 
 ## Resources
 

@@ -1,0 +1,103 @@
+---
+title: "Project 1"
+output: html_document
+date: "2024-02-15"
+Rebecca Redeker 02/26/2024
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+---
+```{r}
+library(tidyverse)
+library(rio)
+library(janitor)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+options(scipen=999)
+
+```
+
+#Load Data
+In this data set, each row represents the percentage of students that are eligible for free meals from public schools, based on their median household income, in the Baltimore area. 
+
+In this data set, there are rows, referred to as "farmxx" that include the percentages of students who were eligible. The xx stands for the year that the school year finished, ranging from 2010 to 2013. There are also two rows that refer the length and area of the designated town. CSA 210 also stands for the name of the city. 
+
+```{r}
+meal_fund <- rio::import("meal_fund.xlsx",sheet="Sheet1",skip=1)
+
+```
+
+#Note:
+This does not include private instituions within the area.
+
+Background on this data from [Vital Signs Open Data Reporter](https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percentage-of-students-receiving-free-or-reduced-meals/about) 
+
+```{r}
+#Set working directory to ~/Documents/GitHub/Rebecca_Redeker_JOUR472/Project 1 
+
+meal_fund <- rio::import("meal_fund.xlsx",sheet="Sheet1",skip=1)
+
+```
+#Questions
+#1: What is the overall distribution of the percentage of students receiving free or reduced meals?
+#2:  How does the percentage of students receiving free or reduced meals vary across different areas in Baltimore?
+#3: Is there a trend in the percentage of students receiving free or reduced meals over the years?
+#4: What is the correlation between the percentage of students receiving free or reduced meals and the area of the neighborhood?
+
+
+Question 1: What is the overall distribution of the percentage of students receiving free or reduced meals in the Baltimore area in 2010?
+
+
+```{r}
+
+ggplot(data = meal_fund, aes(x = farms10)) +
+  geom_histogram(binwidth=5,fill = "blue", color = "black") +
+  labs(title = "Distribution of Reduced Meals in 2010", x = "Percentage")
+```
+#Answer #1: 
+Many areas within Baltimore had nearly 80% of students receiving free or reduced meals, through public schools. Less than five feature ID areas had between 20% and 40% of students in the area receiving aid for their meals. 15 areas had nearly 95% of students receiving free meals for their public schools. 
+
+
+#Question 2: How does the percentage of students receiving free or reduced meals vary across different communities in Baltimore for 2013?
+```{r}
+ggplot(data = meal_fund, aes(x = CSA2010, y = farms13)) +
+  geom_boxplot(color = "black") +
+  labs(title = "Reduced meals in different Baltimore areas", x = "Neighborhood", y = "Percentage")
+```
+
+#Answer:
+Most neighborhoods in 2013 had between 55% and 85% of students receiving free or reduced meals. There were some outliers of the amount of students receiving aid in certain areas. For example, Roland Park/Poplar Hill had 13.28% of students. In addition, both Mount Washington/Coldspring and North Baltimore/Guilford/Homeland had 28.57% and 28.18%m, which was far below most communities.
+
+
+#Question 3:Is there a trend in the percentage of students receiving free or reduced meals over the years?
+```{r}
+meal_fund_long <- gather(meal_fund, key = "Year", value = "Percentage", farms10:farms13)
+ggplot(meal_fund_long, aes(x = Year, y = Percentage)) +
+  geom_bar(stat = "identity", position = "dodge", color = "purple") +
+  labs(
+    title = "Trends in Reduced Meals from 2010-2013",
+    x = "Year",
+    y = "Percentage",
+    caption = "source: Vital-Signs Data Portal"
+  )
+```
+
+#Answer: 
+There is not a definite trend to the percentage of students in public schools receiving meal-related aid, in the Baltimore area. In 2012, there was a decrease in the amount of students receiving aid by between 5% and 10%. In 2013, the number increased again, to a higher amount than both 2010 and 2011. 
+
+
+
+#Question 4: What is the average percentage of students receiving meal asssitance across Baltimore, accross all four school years? What year had the biggest changes?
+```{r}
+average_assitance <- meal_fund %>%
+  select(FID, farms10, farms11, farms12, farms13) %>%
+  gather(key = "FID", value = "Percentage", farms10:farms11:farms12:farms13) %>%
+  group_by(FID) %>%
+  summarize(average_percentage = mean(Percentage))
+
+```
+#Answer:
+In 2010, on average, 78.94% of students in these areas were provided with aid. In 2011, it remained close in number just increasing to 79.41%. In 2012, the average percentage decreased by a large number, to 72.65%, and it rose by even more to 80.6% in 2013. 
+
