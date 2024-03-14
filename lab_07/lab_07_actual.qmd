@@ -62,12 +62,41 @@ Which U.S. state saw the highest percentage increase in opiod pills from 2006 to
 --Produce two tables, one for 2006 and one for 2014. In the 2006 table, rename the total to total_2006. In the 2014 table, rename the total to total_2014. 
 --Join the tables into a new table, arcos_combo
 --Your table must have the full name of the states. Join with the state crosswalk table
+
+```{r}
+total_2006 <- arcos %>%
+  filter(year == 2006) %>% 
+rename(total_pills_2006=total_pills)
+
+  total_2014 <- arcos %>%
+  filter(year == 2014) %>% 
+    rename(total_pills_2014=total_pills)
+  
+  arcos_combo <- total_2006 %>% 
+    inner_join(total_2014, by=c("countyfips","buyer_county","buyer_state")) %>% 
+    inner_join(state_crosswalk, by=c("buyer_state"="state_abb"))
+  
+  
+  five_highest<- arcos_combo %>% 
+    select(total_pills_2006, total_pills_2014, state_name) %>% 
+    mutate(percentage_change= (total_pills_2014-total_pills_2006)/total_pills_2006) %>% 
+    slice_max(percentage_change, n=5)
+  
+    five_lowest<- arcos_combo %>% 
+    select(total_pills_2006, total_pills_2014, state_name) %>% 
+    mutate(percentage_change= (total_pills_2014-total_pills_2006)/total_pills_2006) %>% 
+    slice_min(percentage_change, n=5)
+  
+```
 --Calculate the percentage change between 2006 and 2014
 --Create one table with the top 5 states by percentage increase 
 --Create a second table with the 5 states with the lowest percentage increase.
 
 --Write a sentence that could be dropped in as the lede of a news story from the finding in question two. 
 
+In Missouri, the number of total pills changed from 2006 to 2014 changed by 361.19%. What prompted this change, and was the change sudden or gradual over time?
+
 
 **Q3** Which U.S. state had the highest number of opioid pills per person for pills shipped in 2014? How many total pills, and what was the per person rate? How did that compare to Washington, D.C.?
+*disregard this*
 
