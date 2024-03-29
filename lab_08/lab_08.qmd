@@ -45,12 +45,42 @@ Some of the information in the tables may need to be cleaned or validated in ord
 **Q1**  What Maryland county has the largest Hispanic population (by percentage of total population)? 
 **A1** 
 ```{r}
-updated_hisp_pop <- hisp_pop %>% 
-  inner_join(md_pop, by=c("name"))
+ hisp_pop <- hisp_pop %>% 
+  mutate(name= case_when(name == "Montgomery County,Maryland" ~ "Montgomery County, Maryland", TRUE ~name))
+
+md_master <- md_pop %>% 
+  inner_join(black_pop) %>% 
+  inner_join(white_pop) %>% 
+  inner_join(hisp_pop) %>% 
+  arrange(desc(hispanic_pop))
+
 ```
 
+A1= Montgomery County had the highest Hispanic Population
 **Q2**  What is the total population of people who identify as white alone in Maryland? 
 **A2**  
+```{r}
+white_md <- white_pop %>%
+  mutate(white_pop = case_when(
+    white_pop == "13510000" ~ 13510000/100,
+    TRUE ~ white_pop
+  ))
+
+md_master <- md_pop %>%
+  inner_join(black_pop) %>% 
+  inner_join(white_pop) %>% 
+  inner_join(hisp_pop) 
+```
 
 **Q3** What is the average Black population in all Maryland counties? 
+```{r}
+md_black <- black_pop %>% 
+  mutate(black_pop = (case_when(
+    name == "Baltimore County, Maryland" ~ 272596, 
+    name == "Baltimore city, Maryland" ~ 358453,
+    TRUE ~ black_pop
+)))
+
+mean(md_black$black_pop)
+```
 **A3** 
