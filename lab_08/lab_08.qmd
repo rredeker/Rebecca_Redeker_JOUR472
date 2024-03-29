@@ -10,10 +10,22 @@ To complete this lab, you need to:
 When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
 
 ## Load libraries and establish settings
+```{r}
+#remove scientific notation
+options(scipen=999)
+#Load tidyverse
+library(tidyverse)
+library(janitor)
+```
 **Task**: Load janitor and the tidyverse
 
 ## Load data
-
+```{r}
+black_pop <- read_csv("data/maryland_black.csv")
+hisp_pop <- read_csv("data/maryland_hispanic.csv")
+md_pop <- read_csv("data/maryland_population.csv")
+white_pop <- read_csv("data/maryland_white.csv")
+```
 **Task**: Load four tables of U.S. Census data.  Each table has one row per Maryland county with 2020 population information.  Each table has these same two columns:
 
 * geoid - a unique identifier for each county
@@ -32,6 +44,10 @@ Some of the information in the tables may need to be cleaned or validated in ord
 
 **Q1**  What Maryland county has the largest Hispanic population (by percentage of total population)? 
 **A1** 
+```{r}
+updated_hisp_pop <- hisp_pop %>% 
+  inner_join(md_pop, by=c("name"))
+```
 
 **Q2**  What is the total population of people who identify as white alone in Maryland? 
 **A2**  
