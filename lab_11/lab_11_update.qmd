@@ -87,11 +87,26 @@ senior <- get_acs(geography = "state",
               state = "FL",
               year = 2020) 
 total<-sum(senior$estimate)
-
+```
 #Answer
 We know that the Florida population is 22.4 million, and the amount of male senior citizens is 1,961,317,and 1,961,317/22,400,000 and
+
+2.) How does the age distribution of middle aged women (35-54)in a tourist state such as California, differ from the age distribution is a more rural area, such as Iowa?
+```{r}
+ca <- get_acs(geography = "state",
+              variables = c(women35_44="B01001A_026",
+                            women45_54="B01001A_027"),
+              state = "CA",
+              year = 2020) 
+ia <- get_acs(geography = "state",
+              variables = c(women35_44="B01001A_026",
+                            women45_54="B01001A_027"),
+              state = "IA",
+              year = 2020) 
+
 ```
-2.) How does the age distribution in a tourist state such as California, differ from the age distribution is a more rural area, such as Iowa? 
+#Answer 
+In California, there is an estimate of 2,771,055 women between the ages of 35 and 54. In Iowa, there is an estimate of 334,464 women between the ages of 35 and 54. California has a population of 39 million, making women between 35 and 54 approximately 7% of the population. Whereas Iowa has a population of 3 million, leaving middle aged women 11% of its population. 
 
 **Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
 
