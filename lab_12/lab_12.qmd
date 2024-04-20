@@ -23,14 +23,88 @@ You can find election results here: https://elections.maryland.gov/elections/202
 ## Load libraries and settings
 
 **Task**: load the tidyverse, tidycensus, rvest and janitor.  Store your Census api key.
+```{r}
+library(tidyverse)
+library(tidycensus)
+library(rvest)
+library(janitor)
+```
+#Load Data
+```{r}
+census_api_key("6d5a47b6c0d0060bddcfcb34b799ebd13fd3fd97", install = TRUE, overwrite = TRUE)
 
+```
 ## Questions
 
 **Q1** Which candidate, Dan Cox or Wes Moore, got the lowest percentage of their votes on Election Day? What does that suggest? Write up your answer in a sentence. 
 **A1**
+```{r}
+election_url<-("https://elections.maryland.gov/elections/2022/general_results/gen_results_2022_1.html")
+
+results<- election_url %>% 
+  read_html() %>% 
+  html_table()
+
+results<- results[[1]] %>% 
+clean_names() %>% 
+  mutate(across(c(3,4,5,7,8), parse_number)) %>% 
+  mutate(pct_election_day= round(election_day/total*100,2)) %>% 
+  slice(-7) %>% 
+arrange(pct_election_day) %>%  
+select(name, pct_election_day) 
+
+```
+
+Wes Moore had a lower percentage of his votes on election day. This means that many of his votes came from mail ahead voters that chose to send in their votes.
 
 **Q2** How many counties did Chris Van Hollen win in Maryland's Senate race? 
-**A2** 
+```{r}
+senate_url<- ("https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html")
+
+senate_results <- senate_url %>%
+  read_html() %>%
+  html_table()
+
+senate_results <- senate_results[[1]] %>%
+  clean_names() %>%
+   mutate(across(c(2:6), parse_number)) %>% 
+   slice(-25) 
+
+senate_results<-senate_results %>% 
+mutate(winner=case_when(chris_van_hollen_democratic > chris_chaffee_republican ~ "van_hollen_win", chris_chaffee_republican > chris_van_hollen_democratic ~ "chaffee_win")) %>% 
+  select(jurisdiction,winner) %>% 
+  filter(winner == "van_hollen_win")
+
+```
+**A2**
+  Van Hollen won 10 counties in Maryland's Senate race. 
 
 **Q3** What percentage of the vote did Chris Van Hollen in Maryland's wealthiest county by median income. (You must use the Tidycensus package to answer this question).
+```{r}
+md <- get_acs(geography = "county",
+              variables = c(median_income = "B19013_001"),
+              state = "MD",
+              year = 2020) %>% 
+arrange(desc(estimate)) 
+#The wealthiest county by median income is Howard County
+
+senate_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html"
+
+senate_results_county <- senate_url %>%
+  read_html() %>%
+  html_table()
+
+senate_results_county <- senate_results_county[[1]] %>%
+  clean_names() %>%
+   mutate(across(c(2:6), parse_number)) %>% 
+   slice(-25) 
+
+senate_results_county<-senate_results_county %>% 
+  mutate(total=chris_van_hollen_democratic+chris_chaffee_republican+scottie_griffin_write_in_democratic+andrew_j_wildman_write_in_unaffiliated+other_write_ins) %>% 
+  select(jurisdiction,chris_van_hollen_democratic,total) %>% 
+  filter(jurisdiction == "Howard") %>% 
+  mutate((pct_wealthy=chris_van_hollen_democratic/total)*100)
+
+```
 **A3** 
+Van Hollen won 71% of Maryland's wealthiest county, Howard County. 
