@@ -1,110 +1,99 @@
-#lab_12
-Sean Mussenden, Aug 16, 2022
+#Milestone_02_Final_Project
 
-## About this lab
+##Background
 
-To complete this lab, you need to:
-* write code in empty codeblocks provided to answer questions included (look for **Q**).
-* write out the answer in the form of a complete sentence in the space given (look for **A**).
+The purpose of this project is to analyze the temperature of Lake Michigan. The data analysis will focus on the comparison to the last full year (2023), but also analyze 2023 in relation to past years. Lastly, it will analyze Lake Michigan's temperature to the temperature of the other four Great Lakes. 
 
-When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
-
-## Overview
-
-There is one main goal of this lab:
-
-* To apply your knowledge of basic web scraping.
-* To integrate scraped data with other data pulled from API packages.
-
-You will do this by scraping data from the Maryland State Board of Election website, and connecting it with U.S. Census data pulled from the Tidycensus package to answer questions that can be answered with one or more data sets. 
-
-You can find election results here: https://elections.maryland.gov/elections/2022/general_results/
-
-## Load libraries and settings
-
-**Task**: load the tidyverse, tidycensus, rvest and janitor.  Store your Census api key.
+#Load Libraries
 ```{r}
 library(tidyverse)
 library(tidycensus)
 library(rvest)
 library(janitor)
+library(dplyr)
+library(readxl)
 ```
-#Load Data
+
+#Questions
+1. In 2023, were there noticeable differences in the temperature of Lake Michigan compared to temperature differences in the other four great lakes?
+2. What 5 days did Lake Michigan have the biggest drop in temperature in 2023? What 5 days did Lake Michigan have the biggest increase in temperature in 2023?
+3.How have the average temperatures of Lake Michigan changed over the past five years, and are there regional weather patterns or recreational activities that could have impacted these changes?
+4. How does 2023's average temperature in July compare to Lake Michigan's temperature in July in 2013, and 2003? 
+5. How does Lake Michigan's temperature compare to the average trends in land temperature in Michigan throughout the 2023 year?
+
+#Load Data from last 5 years
 ```{r}
-census_api_key("6d5a47b6c0d0060bddcfcb34b799ebd13fd3fd97", install = TRUE, overwrite = TRUE)
+data23 <- rio::import("temp2023.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
 
+data22 <- rio::import("temp2022.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+
+data21 <- rio::import("temp2021.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+
+data20 <- rio::import("temp2020.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+
+data19 <- rio::import("temp2019.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
 ```
-## Questions
 
-**Q1** Which candidate, Dan Cox or Wes Moore, got the lowest percentage of their votes on Election Day? What does that suggest? Write up your answer in a sentence. 
-**A1**
+#Load Data from 2013 and 2003
 ```{r}
-election_url<-("https://elections.maryland.gov/elections/2022/general_results/gen_results_2022_1.html")
+data13 <- rio::import("temp2013.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
 
-results<- election_url %>% 
-  read_html() %>% 
-  html_table()
-
-results<- results[[1]] %>% 
-clean_names() %>% 
-  mutate(across(c(3,4,5,7,8), parse_number)) %>% 
-  mutate(pct_election_day= round(election_day/total*100,2)) %>% 
-  slice(-7) %>% 
-arrange(pct_election_day) %>%  
-select(name, pct_election_day) 
+data03 <- rio::import("temp2003.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
 
 ```
-
-Wes Moore had a lower percentage of his votes on election day. This means that many of his votes came from mail ahead voters that chose to send in their votes.
-
-**Q2** How many counties did Chris Van Hollen win in Maryland's Senate race? 
+#Load Average Temperatures of 2023
 ```{r}
-senate_url<- ("https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html")
-
-senate_results <- senate_url %>%
-  read_html() %>%
-  html_table()
-
-senate_results <- senate_results[[1]] %>%
-  clean_names() %>%
-   mutate(across(c(2:6), parse_number)) %>% 
-   slice(-25) 
-
-senate_results<-senate_results %>% 
-mutate(winner=case_when(chris_van_hollen_democratic > chris_chaffee_republican ~ "van_hollen_win", chris_chaffee_republican > chris_van_hollen_democratic ~ "chaffee_win")) %>% 
-  select(jurisdiction,winner) %>% 
-  filter(winner == "van_hollen_win")
-
+manis_temp <- read_excel("manis_temp.xltx")
 ```
-**A2**
-  Van Hollen won 10 counties in Maryland's Senate race. 
 
-**Q3** What percentage of the vote did Chris Van Hollen in Maryland's wealthiest county by median income. (You must use the Tidycensus package to answer this question).
+#Question 1
+In 2023, were there noticeable differences in the average temperature of Lake Michigan compared to temperature differences in the other four great lakes?
 ```{r}
-md <- get_acs(geography = "county",
-              variables = c(median_income = "B19013_001"),
-              state = "MD",
-              year = 2020) %>% 
-arrange(desc(estimate)) 
-#The wealthiest county by median income is Howard County
+mich_avg <- data23 
+ mean(data23$Sup.)
+ mean(data23$Mich.)
+ mean(data23$Huron)
+ mean(data23$Erie)
+ mean(data23$Ont.)
+ mean(data23$St.Clr)
 
-senate_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html"
-
-senate_results_county <- senate_url %>%
-  read_html() %>%
-  html_table()
-
-senate_results_county <- senate_results_county[[1]] %>%
-  clean_names() %>%
-   mutate(across(c(2:6), parse_number)) %>% 
-   slice(-25) 
-
-senate_results_county<-senate_results_county %>% 
-  mutate(total=chris_van_hollen_democratic+chris_chaffee_republican+scottie_griffin_write_in_democratic+andrew_j_wildman_write_in_unaffiliated+other_write_ins) %>% 
-  select(jurisdiction,chris_van_hollen_democratic,total) %>% 
-  filter(jurisdiction == "Howard") %>% 
-  mutate((pct_wealthy=chris_van_hollen_democratic/total)*100)
-
+#Mutate to own row 
+ 
+mich_avg <- data23 %>% 
+mutate(Sup. = mean(data23$Sup.), 
+ Mich. = mean(data23$Mich.),
+ Huron = mean(data23$Huron),
+ Erie = mean(data23$Erie),
+ Ont. =  mean(data23$Ont.),
+St.Clr = mean(data23$St.Clr)) %>% 
+  head(1) %>% 
+  select(Sup., Mich., Huron, Erie, Ont., St.Clr)
 ```
-**A3** 
-Van Hollen won 71% of Maryland's wealthiest county, Howard County. 
+#Observations
+Lake Michigan was recorded on average lower temperatures (10.75 degrees celsius average ) than every lake except Lake Huron, which was recorded at a 9.97 degrees celsius average, and Lake Superior, at a 7.12 degrees celsius. Lake Superior is North of Lake Michigan, so expected to be at a cooler temperature. Lake Huron is North-East of Lake Michigan, and isn't as large, so most likely cools faster. 
+
+
+#Question 2
+What 5 days did Lake Michigan have the biggest drop in temperature in 2023? What 5 days did Lake Michigan have the biggest increase in temperature in 2023?
+```{r}
+mich_drop <- data23 %>% 
+ select(year,day,mich)%>%
+   arrange(desc(mich))%>%
+  slice_head(n = 5)
+```
+#Professor Wells- I got this to run, but I can tell the answers that ran are not correct by looking at the data. On Tuesday, can we discuss what is wrong with this code?
