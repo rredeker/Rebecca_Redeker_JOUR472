@@ -1,0 +1,201 @@
+#Milestone_02_Final_Project
+
+##Background
+
+The purpose of this project is to analyze the temperature of Lake Michigan. The data analysis will focus on the comparison to the last full year (2023), but also analyze 2023 in relation to past years. Lastly, it will analyze Lake Michigan's temperature to the temperature of the other four Great Lakes. 
+
+#Load Libraries
+```{r}
+library(tidyverse)
+library(tidycensus)
+library(rvest)
+library(janitor)
+library(dplyr)
+library(readxl)
+library(stats)
+library(ggplot2)
+library(lubridate)
+library(tidyr)
+```
+
+#Questions
+1. In 2023, were there noticeable differences in the temperature of Lake Michigan compared to temperature differences in the other four great lakes?
+2. What 5 days did Lake Michigan have the biggest drop in temperature in 2023? What 5 days did Lake Michigan have the biggest increase in temperature in 2023?
+3.How have the average temperatures of Lake Michigan changed over the past five years, and are there regional weather patterns or recreational activities that could have impacted these changes?
+4. How does 2023's temperature of the first 100 days compare to the first 100 days of 2013 and 2003?
+5. How does Lake Michigan's temperature compare to the average trends in land temperature in Michigan throughout the 2023 year?
+
+#Load Data from last 5 years
+```{r}
+data23 <- rio::import("temp2023.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
+
+data22 <- rio::import("temp2022.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
+
+data21 <- rio::import("temp2021.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
+
+data20 <- rio::import("temp2020.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
+
+data19 <- rio::import("temp2019.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+  clean_names
+```
+
+#Load Data from 2013 and 2003
+```{r}
+data13 <- rio::import("temp2013.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+  clean_names()
+
+data03 <- rio::import("temp2003.txt") %>% 
+  clean_names() %>% 
+  rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8") %>% 
+clean_names()
+
+```
+#Load Average Temperatures of 2023
+```{r}
+manis_temp <- read_excel("manis_temp.xltx")
+```
+
+#Question 1
+In 2023, were there noticeable differences in the average temperature of Lake Michigan compared to temperature differences in the other four great lakes?
+```{r}
+mich_avg_2023 <- data23 
+ mean(data23$sup)
+ mean(data23$mich)
+ mean(data23$huron)
+ mean(data23$erie)
+ mean(data23$ont)
+ mean(data23$st_clr)
+
+#Mutate to own row 
+ 
+mich_avg_2023 <- data23 %>% 
+mutate(sup = mean(data23$sup), 
+ mich = mean(data23$mich),
+ huron = mean(data23$huron),
+ erie = mean(data23$erie),
+ ont =  mean(data23$ont),
+st_clr = mean(data23$st_clr)) %>% 
+  head(1) %>% 
+  select(sup, mich, huron, erie, ont, st_clr)
+```
+#Observations
+Lake Michigan was recorded on average lower temperatures (10.75 degrees celsius average ) than every lake except Lake Huron, which was recorded at a 9.97 degrees celsius average, and Lake Superior, at a 7.12 degrees celsius. Lake Superior is North of Lake Michigan, so expected to be at a cooler temperature. Lake Huron is North-East of Lake Michigan, and isn't as large, so most likely cools faster. 
+
+
+#Question 2
+What 5 days did Lake Michigan have the biggest changes in temperature for 2023?
+```{r}
+mich_droplag <- data23 %>% 
+  select(year, day, mich) %>%
+  arrange(day) %>%
+  mutate(temp_diff = mich - lag(mich, default = first(mich))) %>% 
+    arrange(desc(temp_diff))
+```
+
+
+#Question 3
+How have the average temperatures of Lake Michigan changed over the past five years, and are there regional weather patterns or recreational activities that could have impacted these changes?
+```{r}
+#Calculate the average Temperature for each year, and get rid of 2024
+year_avg <- bind_rows(data19, data20, data21, data22, data23) %>%
+  group_by(year) %>%
+   filter(year != 2024) %>% 
+  summarise(year_avg = mean(mich))
+#Make a plot
+ggplot(year_avg, aes(x = year, y = year_avg)) +
+  geom_line() +
+  geom_point() +
+  labs(x = "Year", y = "Average Temperature of Lake Michigan", title = "Lake Michigan's Average Temperature Trends")
+
+```
+There was an upwards trend in Lake Michigan's temperature from 2019 to 2021, with a slight decrease in 2022. However, the rise in temperatures in 2023 was significant. Just the difference between 2022 and 2023 rose from about 9.7 degrees Celsius to approximately 13.9 degrees Celsius. 
+
+#Question 4 
+How does 2023's temperature of the first 100 days compare to the first 100 days of 2013 and 2003? 
+```{r}
+# Select data
+data23_select <- select(data23, year, day, mich)
+data13_select <- select(data13, year, day, mich)
+data03_select <- select(data03, year, day, mich)
+
+# Filter data for 365 days of each year (since none were leap)
+data23_all_days <- filter(data23_select, day <= 365)
+data13_all_days <- filter(data13_select, day <= 365)
+data03_all_days <- filter(data03_select, day <= 365)
+
+# Plot
+ggplot() +
+  geom_line(data = data23_all_days, aes(x = day, y = mich, color = "2023")) +
+  geom_line(data = data13_all_days, aes(x = day, y = mich, color = "2013")) +
+  geom_line(data = data03_all_days, aes(x = day, y = mich, color = "2003")) +
+  labs(x = "Day of the year", y = "Temperature (°C)", color = "Year",
+       title = "Temperature of Lake Michigan Daily by Decade")
+```
+#Answer: 
+The temperature of Lake Michigan stayed consistent with trends over the last two decades. However, 2013 had a jump in temperature between approx. day 185 and 200. 2023 has this jump much earlier, from day 145 to day 165.  While 2003 did not have a drastic jump in temperature. As displayed, the 2023 temperature line is overall higher than the 2013 line. The 2003 line is also visibly the lowest line. This means that over the last two decades, the temperature of Lake Michigan is increasing. 
+
+#Question 5
+How does Lake Michigan's temperature compare to the average trends in land temperature of Manistee, MI. Manistee is on the coast of Lake Michigan. (manis temp) in Michigan throughout the 2023 year?
+```{r}
+#Convert Data23 to months, to match Manistee.
+data23 <- data23 %>%
+  mutate(month = case_when(
+    day %in% 1:31 ~ "January",
+    day %in% 32:60 ~ "February",
+    day %in% 61:91 ~ "March",
+    day %in% 92:121 ~ "April",
+    day %in% 122:152~ "May",
+    day %in% 153:182 ~ "June",
+    day %in% 183:212 ~ "July",
+    day %in% 213:243 ~ "August",
+    day %in% 244:273 ~ "September",
+    day %in% 274:304 ~ "October",
+    day %in% 305:333 ~ "November",
+    day %in% 334:365 ~ "December",
+  ))
+
+#Find the Monthly average for data23
+monthly_avg_mich <- data23 %>%
+  group_by(month) %>%
+  summarize(avg_temp = mean(mich, na.rm = TRUE))
+
+#Flip Manistee table to horizontal
+manis_temp1 <- manis_temp %>% 
+pivot_longer(names_to = "month",
+             values_to="temp",
+             cols=2:13)
+#Make a Bar Chart
+ggplot(merged_data, aes(x = month)) +
+  geom_bar(aes(y = mich, fill = "Data23"), stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_bar(aes(y = temp, fill = "Manistee"), stat = "identity", position = position_dodge(width = 0.9)) +
+  labs(title = "Monthly Average Temperatures - Data23 vs Manistee",
+       y = "Temperature",
+       fill = "Dataset") +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+```
+#Notes- Question five is only half complete. Ran into some issues trying to make a plot. 
+
+
+#Memo
+From examining the temperature trends of Lake Michigan, there were several significant patterns. First, Lake Michigan consistently had lower average temperatures compared to most other Great Lakes in 2023, with only Lake Huron recording a slightly lower average. This can be attributed to the geographical location of Lake Michigan, which is  further south than Lake Superior and Huron. Additionally, smaller lakes like Lake Huron potentially will cool or warm faster.
+Furthermore, an upward trend in Lake Michigan's temperature is evident from 2019 to 2021, followed by a slight decrease in 2022. However, 2023 witnessed a significant rise, with temperatures that range from approximately 9.7 to 13.9 degrees Celsius, indicating a significant difference from previous years.
+Additionally, the analysis from two decades (2003, 2013 and 2023) showed long term insights. While 2013 had a temperature jump between days 185 and 200, 2023 experienced a similar thing much earlier, between days 145 and 165. But, 2003 did not exhibit a drastic temperature fluctuation. The temperature trend lines of the years indicate a consistent increase over the past two decades, with 2023 showcasing the highest overall temperatures.
+The main finding of this data set so far is that the temperature of Lake Michigan is overall rising over the years. While it is not a consistent rise, the trend is that as time goes on, the temperature of the water is rising. The next step that will add to a significant part of the story, is the comparison of the changes in Lake Michigan’s temperature, and the changes in the air temperature of Manistee, one of the main coastal areas on Lake Michigan’s border. 

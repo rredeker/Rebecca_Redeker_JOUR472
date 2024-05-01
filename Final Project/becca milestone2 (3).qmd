@@ -31,18 +31,29 @@ clean_names()
 data22 <- rio::import("temp2022.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 
 data21 <- rio::import("temp2021.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 
 data20 <- rio::import("temp2020.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
-
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 data19 <- rio::import("temp2019.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 ```
 
 #Load Data from 2013 and 2003
@@ -50,10 +61,16 @@ data19 <- rio::import("temp2019.txt") %>%
 data13 <- rio::import("temp2013.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 
 data03 <- rio::import("temp2003.txt") %>% 
   clean_names() %>% 
   rename(year= "v1", day="v2", Sup.="v3", Mich.="v4", Huron="v5",Erie="v6", Ont.="v7",St.Clr="v8")
+# #RSW Comment - add a clean_names after this.
+# %>% 
+#   clean_names()
 
 ```
 #Load Average Temperatures of 2023
@@ -64,6 +81,10 @@ manis_temp <- read_excel("manis_temp.xltx")
 #Question 1
 In 2023, were there noticeable differences in the average temperature of Lake Michigan compared to temperature differences in the other four great lakes?
 ```{r}
+#RSW comment - this failed because the column names are wrong and the means are not being returned into mich_avg
+
+#Think about the steps in building a table just to have the average 2023 results. You will need to filter by the year you want and then average things out
+
 mich_avg <- data23 
  mean(data23$Sup.)
  mean(data23$Mich.)
@@ -71,6 +92,19 @@ mich_avg <- data23
  mean(data23$Erie)
  mean(data23$Ont.)
  mean(data23$St.Clr)
+ 
+ #>  mean(data23$Sup.)
+# Warning: argument is not numeric or logical: returning NA[1] NA
+# >  mean(data23$Mich.)
+# Warning: argument is not numeric or logical: returning NA[1] NA
+# >  mean(data23$Huron)
+# Warning: argument is not numeric or logical: returning NA[1] NA
+# >  mean(data23$Erie)
+# Warning: argument is not numeric or logical: returning NA[1] NA
+# >  mean(data23$Ont.)
+# Warning: argument is not numeric or logical: returning NA[1] NA
+# >  mean(data23$St.Clr)
+# Warning: argument is not numeric or logical: returning NA[1] NA
 
 #Mutate to own row 
  
@@ -97,3 +131,5 @@ mich_drop <- data23 %>%
   slice_head(n = 5)
 ```
 #Professor Wells- I got this to run, but I can tell the answers that ran are not correct by looking at the data. On Tuesday, can we discuss what is wrong with this code?
+
+#Question 3
